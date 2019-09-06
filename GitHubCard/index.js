@@ -35,9 +35,34 @@ axios
           Using that array, iterate over it, requesting data for each user, creating a new card for each
           user, and adding that card to the DOM.
 */
-
 const followersArray = [];
+axios
+	.get("https://api.github.com/users/chards79/followers")
+	.then(response => {
+		// console.log(response.data);
+		response.data.map(item => {
+			followersArray.push(item.login);
+		});
+		// console.log(followersArray);
+	})
+	.catch(error => {
+		console.log("Try again", error);
+	});
+console.log(followersArray[0]);
 
+followersArray.map(item => {
+	console.log(item);
+	axios
+		.get(`https://api.github.com/users/${item}`)
+		.then(response => {
+			console.log(response.data);
+			const theirCards = createCard(response.data);
+			entry.appendChild(theirCards);
+		})
+		.catch(error => {
+			console.log("Not returned", error);
+		});
+});
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
 
@@ -83,7 +108,7 @@ function createCard(data) {
 	userName.textContent = `${data.login}`;
 	userLocation.textContent = `Location: ${data.location}`;
 	userProfile.textContent = `Profile: `;
-	profileLink.href = `${data.html_url}`;
+	profileLink.textContent = `${data.html_url}`;
 	userFollowers.textContent = `Followers: ${data.followers}`;
 	userFollowing.textContent = `Following: ${data.following}`;
 	userBio.textContent = `Bio: ${data.bio}`;
@@ -94,6 +119,7 @@ function createCard(data) {
 	info.appendChild(userName);
 	info.appendChild(userLocation);
 	info.appendChild(userProfile);
+	userProfile.appendChild(profileLink);
 	info.appendChild(userFollowers);
 	info.appendChild(userFollowing);
 	info.appendChild(userBio);
