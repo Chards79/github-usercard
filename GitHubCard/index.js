@@ -38,31 +38,32 @@ axios
 const followersArray = [];
 axios
 	.get("https://api.github.com/users/chards79/followers")
-	.then(response => {
-		// console.log(response.data);
-		response.data.map(item => {
-			followersArray.push(item.login);
-		});
+	.then(
+		response =>
+			// console.log(response.data);
+			response.data.map(item => {
+				return item.login;
+			})
 		// console.log(followersArray);
+	)
+	.then(items => {
+		console.log(items);
+		items.forEach(item => {
+			axios
+				.get(`https://api.github.com/users/${item}`)
+				.then(response => {
+					console.log(response.data);
+					const theirCards = createCard(response.data);
+					entry.appendChild(theirCards);
+				})
+				.catch(error => {
+					console.log("Not returned", error);
+				});
+		});
 	})
 	.catch(error => {
-		console.log("Try again", error);
+		console.log("Not returned", error);
 	});
-console.log(followersArray[0]);
-
-followersArray.map(item => {
-	console.log(item);
-	axios
-		.get(`https://api.github.com/users/${item}`)
-		.then(response => {
-			console.log(response.data);
-			const theirCards = createCard(response.data);
-			entry.appendChild(theirCards);
-		})
-		.catch(error => {
-			console.log("Not returned", error);
-		});
-});
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
 
